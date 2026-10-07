@@ -1,0 +1,9 @@
+{
+  "version": 2,
+  "rewrites": [
+    { "source": "/api/jpy/detail", "destination": "/api/jpy/detail.js" },
+    { "source": "/api/jpy/history", "destination": "/api/jpy/history.js" },
+    { "source": "/", "destination": "/public/index.html" },
+    { "source": "/(.*)", "destination": "/public/$1" }
+  ]
+}

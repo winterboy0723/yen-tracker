@@ -1,0 +1,12 @@
+{
+  "name": "yen-tracker",
+  "version": "1.0.0",
+  "description": "실시간 네이버 고시 환율 기반 엔화 변동 추적기 및 매수 타이밍 어드바이저",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "keywords": ["yen", "exchange-rate", "naver-finance", "japan-trip"],
+  "author": "Antigravity",
+  "license": "ISC"
+}

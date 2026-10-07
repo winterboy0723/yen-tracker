@@ -1,0 +1,1306 @@
+/* ==========================================================================
+   엔화 변동 추적기 (Yen Tracker) - Premium Design System & Styles
+   ========================================================================== */
+
+:root {
+  /* 다크 테마 기본 토큰 */
+  --bg-primary: #0a0e17;
+  --bg-secondary: #111726;
+  --bg-card: rgba(18, 24, 40, 0.75);
+  --bg-card-hover: rgba(24, 32, 54, 0.85);
+  --bg-glass: rgba(255, 255, 255, 0.04);
+  --border-color: rgba(255, 255, 255, 0.08);
+  --border-highlight: rgba(79, 140, 255, 0.3);
+
+  --text-main: #f0f4fc;
+  --text-muted: #8e9bb5;
+  --text-dim: #5c6882;
+
+  /* 테마 포인트 컬러 */
+  --brand-cyan: #00d2ff;
+  --brand-blue: #3a7bd5;
+  --brand-gradient: linear-gradient(135deg, #00d2ff 0%, #3a7bd5 100%);
+
+  /* 금융/상태 컬러 */
+  --color-up: #ff4757;      /* 한국식 상승(빨강) */
+  --color-down: #2ed573;    /* 한국식 하락(초록/파랑) */
+  --color-buy: #10b981;     /* 매수 추천 초록 */
+  --color-hold: #f59e0b;    /* 관망 주황 */
+  --color-wait: #ef4444;    /* 고점 대기 빨강 */
+
+  --shadow-card: 0 10px 30px -10px rgba(0, 0, 0, 0.5), 0 0 1px 1px rgba(255, 255, 255, 0.05);
+  --shadow-glow: 0 0 25px rgba(0, 210, 255, 0.15);
+
+  --radius-lg: 20px;
+  --radius-md: 14px;
+  --radius-sm: 8px;
+  --radius-full: 9999px;
+
+  --transition-smooth: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* 라이트 테마 변수 */
+body.light-theme {
+  --bg-primary: #f4f7fb;
+  --bg-secondary: #ffffff;
+  --bg-card: rgba(255, 255, 255, 0.88);
+  --bg-card-hover: #ffffff;
+  --bg-glass: rgba(0, 0, 0, 0.03);
+  --border-color: rgba(0, 0, 0, 0.08);
+  --border-highlight: rgba(58, 123, 213, 0.35);
+
+  --text-main: #182033;
+  --text-muted: #5e6b82;
+  --text-dim: #9aa5b8;
+
+  --shadow-card: 0 10px 25px -8px rgba(30, 41, 59, 0.08), 0 0 1px 1px rgba(0, 0, 0, 0.05);
+  --shadow-glow: 0 0 25px rgba(58, 123, 213, 0.1);
+}
+
+/* 글로벌 리셋 */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, system-ui, Roboto, sans-serif;
+  background-color: var(--bg-primary);
+  color: var(--text-main);
+  min-height: 100vh;
+  line-height: 1.5;
+  overflow-x: hidden;
+  transition: background-color 0.3s ease, color 0.3s ease;
+  position: relative;
+}
+
+/* 배경 앰비언트 글로우 */
+.bg-glow {
+  position: fixed;
+  width: 500px;
+  height: 500px;
+  border-radius: 50%;
+  pointer-events: none;
+  filter: blur(130px);
+  z-index: 0;
+  opacity: 0.45;
+}
+.bg-glow-1 {
+  top: -150px;
+  right: -100px;
+  background: radial-gradient(circle, rgba(0, 210, 255, 0.25) 0%, rgba(58, 123, 213, 0.05) 70%);
+}
+.bg-glow-2 {
+  bottom: 10%;
+  left: -150px;
+  background: radial-gradient(circle, rgba(16, 185, 129, 0.2) 0%, rgba(0, 0, 0, 0) 70%);
+}
+
+.app-container {
+  max-width: 1240px;
+  margin: 0 auto;
+  padding: 24px 20px 60px;
+  position: relative;
+  z-index: 1;
+}
+
+/* ==========================================================================
+   헤더 (Header)
+   ========================================================================== */
+.main-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px 24px;
+  margin-bottom: 24px;
+  background: var(--bg-card);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-card);
+}
+
+.logo-area {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.logo-icon {
+  width: 44px;
+  height: 44px;
+  border-radius: 12px;
+  background: var(--brand-gradient);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: 'Outfit', sans-serif;
+  font-size: 24px;
+  font-weight: 800;
+  color: #fff;
+  box-shadow: 0 4px 15px rgba(0, 210, 255, 0.35);
+}
+
+.logo-text h1 {
+  font-size: 1.35rem;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--text-main);
+  letter-spacing: -0.02em;
+}
+
+.badge-sub {
+  font-family: 'Outfit', sans-serif;
+  font-size: 0.75rem;
+  font-weight: 600;
+  padding: 2px 8px;
+  border-radius: var(--radius-full);
+  background: rgba(0, 210, 255, 0.12);
+  color: var(--brand-cyan);
+  border: 1px solid rgba(0, 210, 255, 0.25);
+}
+
+.source-tag {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  margin-top: 2px;
+}
+
+.live-pulse {
+  width: 7px;
+  height: 7px;
+  background: #10b981;
+  border-radius: 50%;
+  box-shadow: 0 0 8px #10b981;
+  animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+  0% { transform: scale(0.95); opacity: 0.8; }
+  50% { transform: scale(1.35); opacity: 1; box-shadow: 0 0 12px #10b981; }
+  100% { transform: scale(0.95); opacity: 0.8; }
+}
+
+.header-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.btn-refresh, .btn-theme {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 14px;
+  border-radius: var(--radius-md);
+  background: var(--bg-glass);
+  border: 1px solid var(--border-color);
+  color: var(--text-main);
+  font-size: 0.85rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: var(--transition-smooth);
+}
+
+.btn-refresh:hover, .btn-theme:hover {
+  background: rgba(255, 255, 255, 0.08);
+  border-color: var(--border-highlight);
+  transform: translateY(-1px);
+}
+
+.btn-refresh:active {
+  transform: scale(0.97);
+}
+
+.btn-refresh.spinning .refresh-icon {
+  animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+/* ==========================================================================
+   대시보드 카드 공통 스타일
+   ========================================================================== */
+.dashboard-grid {
+  display: grid;
+  grid-template-columns: repeat(12, 1fr);
+  gap: 20px;
+}
+
+.card {
+  background: var(--bg-card);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-lg);
+  padding: 24px;
+  box-shadow: var(--shadow-card);
+  transition: var(--transition-smooth);
+  position: relative;
+  overflow: hidden;
+}
+
+.card:hover {
+  border-color: var(--border-highlight);
+}
+
+.card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.header-title-group {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.section-icon {
+  font-size: 1.25rem;
+}
+
+.card-header h2 {
+  font-size: 1.15rem;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+}
+
+/* 뱃지들 */
+.badge-info, .badge-tag {
+  font-size: 0.75rem;
+  font-weight: 600;
+  padding: 4px 10px;
+  border-radius: var(--radius-full);
+  background: rgba(255, 255, 255, 0.06);
+  color: var(--text-muted);
+  border: 1px solid var(--border-color);
+}
+
+/* ==========================================================================
+   1. 히어로 환율 카드 & 타이밍 뱃지 (Hero Section)
+   ========================================================================== */
+.hero-rate-card {
+  grid-column: span 12;
+  background: linear-gradient(145deg, rgba(20, 27, 46, 0.85) 0%, rgba(13, 18, 32, 0.85) 100%);
+  border: 1px solid rgba(0, 210, 255, 0.2);
+}
+
+.currency-pair {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.flag-icon {
+  font-size: 1.3rem;
+}
+
+.pair-title {
+  font-family: 'Outfit', sans-serif;
+  font-size: 1.05rem;
+  font-weight: 700;
+}
+
+.round-badge {
+  font-size: 0.75rem;
+  padding: 2px 8px;
+  border-radius: var(--radius-full);
+  background: rgba(0, 210, 255, 0.1);
+  color: var(--brand-cyan);
+  border: 1px solid rgba(0, 210, 255, 0.2);
+}
+
+.market-status-badge {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  padding: 4px 10px;
+  border-radius: var(--radius-full);
+  background: rgba(16, 185, 129, 0.12);
+  color: #10b981;
+}
+
+.status-dot {
+  width: 6px;
+  height: 6px;
+  background: currentColor;
+  border-radius: 50%;
+}
+
+.hero-rate-body {
+  display: grid;
+  grid-template-columns: 1fr 1.3fr;
+  gap: 24px;
+  align-items: center;
+  padding: 12px 0 24px;
+}
+
+.price-display-group {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.main-price-row {
+  display: flex;
+  align-items: baseline;
+  gap: 6px;
+}
+
+.currency-symbol {
+  font-size: 1.8rem;
+  font-weight: 600;
+  color: var(--text-muted);
+}
+
+.main-rate-value {
+  font-family: 'Outfit', sans-serif;
+  font-size: 3.5rem;
+  font-weight: 800;
+  letter-spacing: -0.03em;
+  color: var(--text-main);
+  text-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+}
+
+.rate-unit {
+  font-size: 0.95rem;
+  color: var(--text-muted);
+  font-weight: 500;
+}
+
+.fluctuation-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 1.05rem;
+  font-weight: 600;
+}
+
+.fluctuation-row.up {
+  color: var(--color-up);
+}
+
+.fluctuation-row.down {
+  color: var(--color-down);
+}
+
+.fluc-desc {
+  font-size: 0.8rem;
+  color: var(--text-dim);
+  font-weight: 400;
+  margin-left: 4px;
+}
+
+/* 매수 평가 배너 (타이밍 박스) */
+.timing-verdict-box {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  padding: 18px 24px;
+  border-radius: var(--radius-md);
+  background: rgba(16, 185, 129, 0.08);
+  border: 1px solid rgba(16, 185, 129, 0.25);
+  box-shadow: 0 4px 20px rgba(16, 185, 129, 0.08);
+  transition: var(--transition-smooth);
+}
+
+.verdict-score-ring {
+  width: 68px;
+  height: 68px;
+  flex-shrink: 0;
+}
+
+.circular-chart {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+.circle-bg {
+  fill: none;
+  stroke: rgba(255, 255, 255, 0.1);
+  stroke-width: 3.8;
+}
+
+.circle {
+  fill: none;
+  stroke-width: 3.8;
+  stroke-linecap: round;
+  stroke: #10b981;
+  transition: stroke-dasharray 1s ease-in-out, stroke 0.5s ease;
+}
+
+.percentage {
+  fill: var(--text-main);
+  font-family: 'Outfit', sans-serif;
+  font-size: 0.55rem;
+  font-weight: 800;
+  text-anchor: middle;
+}
+
+.verdict-content {
+  flex: 1;
+}
+
+.verdict-tag {
+  display: inline-block;
+  font-size: 0.72rem;
+  font-weight: 700;
+  padding: 3px 8px;
+  border-radius: 4px;
+  background: #10b981;
+  color: #fff;
+  margin-bottom: 6px;
+  letter-spacing: 0.02em;
+}
+
+.verdict-title {
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: var(--text-main);
+  margin-bottom: 4px;
+}
+
+.verdict-desc {
+  font-size: 0.82rem;
+  color: var(--text-muted);
+  line-height: 1.4;
+}
+
+/* 실제 적용 환율별 가격표 그리드 */
+.rates-breakdown-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 12px;
+  padding-top: 18px;
+  border-top: 1px solid var(--border-color);
+}
+
+.rate-subcard {
+  background: var(--bg-glass);
+  border: 1px solid var(--border-color);
+  padding: 14px 16px;
+  border-radius: var(--radius-md);
+  transition: var(--transition-smooth);
+}
+
+.rate-subcard.highlight-subcard {
+  background: rgba(0, 210, 255, 0.06);
+  border-color: rgba(0, 210, 255, 0.3);
+}
+
+.subcard-label {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 0.78rem;
+  color: var(--text-muted);
+  margin-bottom: 6px;
+}
+
+.badge-best {
+  font-size: 0.65rem;
+  padding: 1px 6px;
+  border-radius: var(--radius-full);
+  background: var(--brand-cyan);
+  color: #0a0e17;
+  font-weight: 700;
+}
+
+.subcard-val {
+  font-family: 'Outfit', sans-serif;
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: var(--text-main);
+}
+
+.subcard-val.text-brand {
+  color: var(--brand-cyan);
+}
+
+.subcard-tip {
+  font-size: 0.72rem;
+  color: var(--text-dim);
+  margin-top: 4px;
+}
+
+/* ==========================================================================
+   2. 다각도 매수 타이밍 정밀 분석 (4-Aspect Advisor)
+   ========================================================================== */
+.advisor-card {
+  grid-column: span 12;
+}
+
+.advisor-factors-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 16px;
+  margin-bottom: 18px;
+}
+
+.factor-item {
+  background: var(--bg-glass);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-md);
+  padding: 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  transition: var(--transition-smooth);
+}
+
+.factor-item:hover {
+  background: rgba(255, 255, 255, 0.06);
+  border-color: var(--border-highlight);
+}
+
+.factor-top {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.factor-icon {
+  font-size: 1.1rem;
+}
+
+.factor-name {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--text-main);
+  flex: 1;
+}
+
+.factor-badge {
+  font-size: 0.7rem;
+  font-weight: 700;
+  padding: 2px 7px;
+  border-radius: var(--radius-full);
+  background: rgba(16, 185, 129, 0.15);
+  color: var(--color-buy);
+}
+
+.factor-score-bar {
+  width: 100%;
+  height: 6px;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: var(--radius-full);
+  overflow: hidden;
+}
+
+.bar-fill {
+  height: 100%;
+  border-radius: var(--radius-full);
+  background: var(--brand-gradient);
+  transition: width 0.8s ease;
+}
+
+.factor-desc {
+  font-size: 0.78rem;
+  color: var(--text-muted);
+  line-height: 1.45;
+}
+
+.dca-split-preview {
+  display: flex;
+  gap: 4px;
+}
+
+.split-pill {
+  flex: 1;
+  font-size: 0.68rem;
+  padding: 4px 6px;
+  border-radius: 6px;
+  text-align: center;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid var(--border-color);
+  color: var(--text-muted);
+}
+
+.split-pill strong {
+  color: var(--brand-cyan);
+}
+
+.advisor-summary-callout {
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+  padding: 14px 18px;
+  border-radius: var(--radius-md);
+  background: rgba(58, 123, 213, 0.08);
+  border: 1px solid rgba(58, 123, 213, 0.25);
+  font-size: 0.88rem;
+  line-height: 1.5;
+}
+
+.callout-icon {
+  font-size: 1.25rem;
+}
+
+.callout-text strong {
+  color: var(--brand-cyan);
+  margin-right: 6px;
+}
+
+/* ==========================================================================
+   3. 환율 변동 차트 섹션 (Chart)
+   ========================================================================== */
+.chart-card {
+  grid-column: span 8;
+}
+
+.chart-controls {
+  display: flex;
+  gap: 6px;
+}
+
+.btn-range, .btn-naver-period {
+  padding: 6px 12px;
+  border-radius: var(--radius-sm);
+  background: var(--bg-glass);
+  border: 1px solid var(--border-color);
+  color: var(--text-muted);
+  font-size: 0.78rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: var(--transition-smooth);
+}
+
+.btn-range:hover, .btn-naver-period:hover {
+  color: var(--text-main);
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.btn-range.active, .btn-naver-period.active {
+  background: var(--brand-cyan);
+  color: #0a0e17;
+  border-color: var(--brand-cyan);
+  font-weight: 700;
+}
+
+.chart-wrapper {
+  height: 280px;
+  width: 100%;
+  position: relative;
+  margin-bottom: 16px;
+}
+
+.naver-chart-wrapper {
+  margin-bottom: 16px;
+}
+
+.naver-chart-tabs {
+  display: flex;
+  gap: 6px;
+  margin-bottom: 12px;
+}
+
+.naver-img-container {
+  width: 100%;
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  background: rgba(0, 0, 0, 0.3);
+  text-align: center;
+  padding: 10px;
+}
+
+.naver-img-container img {
+  max-width: 100%;
+  height: auto;
+  border-radius: 8px;
+}
+
+.chart-stats-bar {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 12px;
+  padding-top: 14px;
+  border-top: 1px solid var(--border-color);
+}
+
+.stat-cell {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.stat-label {
+  font-size: 0.72rem;
+  color: var(--text-dim);
+}
+
+.stat-val {
+  font-family: 'Outfit', sans-serif;
+  font-size: 0.95rem;
+  font-weight: 700;
+}
+
+.text-buy { color: var(--color-buy); }
+.text-sell { color: var(--color-up); }
+.text-highlight { color: var(--brand-cyan); }
+
+/* ==========================================================================
+   4. 환전 계산기 (Calculator)
+   ========================================================================== */
+.calculator-card {
+  grid-column: span 4;
+}
+
+.calc-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-bottom: 18px;
+}
+
+.calc-input-box {
+  background: var(--bg-glass);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-md);
+  padding: 14px;
+}
+
+.calc-input-box label {
+  display: block;
+  font-size: 0.76rem;
+  color: var(--text-muted);
+  margin-bottom: 6px;
+  font-weight: 500;
+}
+
+.input-with-currency {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.curr-symbol {
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: var(--brand-cyan);
+}
+
+.input-with-currency input {
+  width: 100%;
+  background: transparent;
+  border: none;
+  outline: none;
+  font-family: 'Outfit', sans-serif;
+  font-size: 1.4rem;
+  font-weight: 700;
+  color: var(--text-main);
+}
+
+.quick-presets {
+  display: flex;
+  gap: 6px;
+  margin-top: 10px;
+  overflow-x: auto;
+}
+
+.btn-preset, .btn-preset-jpy {
+  padding: 4px 8px;
+  font-size: 0.7rem;
+  border-radius: 6px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid var(--border-color);
+  color: var(--text-muted);
+  cursor: pointer;
+  white-space: nowrap;
+  transition: var(--transition-smooth);
+}
+
+.btn-preset:hover, .btn-preset-jpy:hover {
+  background: rgba(255, 255, 255, 0.1);
+  color: var(--text-main);
+}
+
+.calc-swap-arrow {
+  align-self: center;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: var(--bg-glass);
+  border: 1px solid var(--border-color);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: var(--transition-smooth);
+}
+
+.calc-swap-arrow:hover {
+  background: var(--brand-cyan);
+  color: #0a0e17;
+  transform: rotate(180deg);
+}
+
+.fee-comparison-box {
+  background: var(--bg-glass);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-md);
+  padding: 14px;
+}
+
+.comparison-title {
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: var(--text-main);
+  margin-bottom: 10px;
+}
+
+.comparison-table {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.comp-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px 10px;
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.02);
+  font-size: 0.78rem;
+}
+
+.comp-row.best-row {
+  background: rgba(16, 185, 129, 0.1);
+  border: 1px solid rgba(16, 185, 129, 0.25);
+}
+
+.comp-row.worst-row {
+  opacity: 0.8;
+}
+
+.col-method {
+  display: flex;
+  flex-direction: column;
+}
+
+.col-method strong {
+  color: var(--text-main);
+  font-size: 0.8rem;
+}
+
+.col-method small {
+  color: var(--text-dim);
+  font-size: 0.68rem;
+}
+
+.method-badge {
+  display: inline-block;
+  width: fit-content;
+  font-size: 0.6rem;
+  padding: 1px 5px;
+  border-radius: 4px;
+  background: #10b981;
+  color: #fff;
+  font-weight: 700;
+  margin-bottom: 2px;
+}
+
+.col-amount {
+  font-family: 'Outfit', sans-serif;
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: var(--text-main);
+}
+
+.col-diff {
+  font-size: 0.7rem;
+  text-align: right;
+}
+
+/* ==========================================================================
+   5. 여행 예산 플래너 (Trip Planner)
+   ========================================================================== */
+.trip-planner-card {
+  grid-column: span 7;
+}
+
+.dday-selector {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.82rem;
+  color: var(--text-muted);
+}
+
+.dday-selector select {
+  padding: 4px 10px;
+  border-radius: var(--radius-sm);
+  background: var(--bg-glass);
+  border: 1px solid var(--border-color);
+  color: var(--text-main);
+  font-size: 0.82rem;
+  outline: none;
+  cursor: pointer;
+}
+
+.trip-grid {
+  display: grid;
+  grid-template-columns: 1.2fr 1fr;
+  gap: 20px;
+}
+
+.trip-items-form {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.trip-input-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 14px;
+  border-radius: var(--radius-md);
+  background: var(--bg-glass);
+  border: 1px solid var(--border-color);
+}
+
+.item-emoji {
+  font-size: 1.25rem;
+}
+
+.item-meta {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.item-meta label {
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: var(--text-main);
+}
+
+.item-meta small {
+  font-size: 0.7rem;
+  color: var(--text-dim);
+}
+
+.trip-input-row input {
+  width: 90px;
+  padding: 6px 8px;
+  border-radius: 6px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid var(--border-color);
+  color: var(--text-main);
+  font-family: 'Outfit', sans-serif;
+  font-size: 0.95rem;
+  font-weight: 700;
+  text-align: right;
+  outline: none;
+}
+
+.trip-input-row input:focus {
+  border-color: var(--brand-cyan);
+}
+
+.input-unit {
+  font-size: 0.75rem;
+  color: var(--text-dim);
+  width: 32px;
+}
+
+.trip-summary-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.trip-summary-box {
+  background: linear-gradient(135deg, rgba(0, 210, 255, 0.1) 0%, rgba(58, 123, 213, 0.15) 100%);
+  border: 1px solid rgba(0, 210, 255, 0.3);
+  border-radius: var(--radius-md);
+  padding: 18px;
+  text-align: center;
+}
+
+.summary-label {
+  font-size: 0.78rem;
+  color: var(--text-muted);
+  margin-bottom: 4px;
+}
+
+.summary-jpy {
+  font-family: 'Outfit', sans-serif;
+  font-size: 2.2rem;
+  font-weight: 800;
+  color: var(--brand-cyan);
+  letter-spacing: -0.02em;
+}
+
+.summary-jpy .unit {
+  font-size: 0.9rem;
+  color: var(--text-muted);
+  font-weight: 600;
+  margin-left: 4px;
+}
+
+.summary-krw-wrap {
+  font-size: 0.85rem;
+  color: var(--text-muted);
+  margin-top: 4px;
+}
+
+.summary-krw-wrap strong {
+  color: var(--text-main);
+  font-size: 1.05rem;
+}
+
+.dca-action-plan {
+  background: var(--bg-glass);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-md);
+  padding: 14px;
+}
+
+.plan-header {
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: var(--text-main);
+  margin-bottom: 10px;
+}
+
+.plan-list {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.plan-list li {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 0.78rem;
+  padding: 6px 8px;
+  border-radius: 6px;
+  background: rgba(255, 255, 255, 0.02);
+}
+
+.plan-stage {
+  color: var(--text-muted);
+}
+
+.plan-percent {
+  font-size: 0.7rem;
+  padding: 2px 6px;
+  border-radius: 4px;
+  background: rgba(0, 210, 255, 0.1);
+  color: var(--brand-cyan);
+  font-weight: 700;
+}
+
+.plan-val {
+  font-family: 'Outfit', sans-serif;
+  color: var(--text-main);
+  font-weight: 700;
+}
+
+/* ==========================================================================
+   6. 알림 시뮬레이터 (Alert Card)
+   ========================================================================== */
+.alert-card {
+  grid-column: span 5;
+}
+
+.alert-box-content {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.alert-desc {
+  font-size: 0.82rem;
+  color: var(--text-muted);
+  line-height: 1.45;
+}
+
+.alert-input-row {
+  display: flex;
+  gap: 10px;
+  align-items: flex-end;
+}
+
+.alert-field {
+  flex: 1;
+}
+
+.alert-field label {
+  display: block;
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  margin-bottom: 6px;
+}
+
+.target-input-wrap {
+  display: flex;
+  align-items: center;
+  background: var(--bg-glass);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-md);
+  padding: 8px 12px;
+}
+
+.target-input-wrap input {
+  width: 100%;
+  background: transparent;
+  border: none;
+  outline: none;
+  font-family: 'Outfit', sans-serif;
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: var(--text-main);
+}
+
+.btn-primary {
+  padding: 10px 16px;
+  border-radius: var(--radius-md);
+  background: var(--brand-gradient);
+  border: none;
+  color: #fff;
+  font-size: 0.82rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: var(--transition-smooth);
+  white-space: nowrap;
+}
+
+.btn-primary:hover {
+  opacity: 0.92;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 15px rgba(0, 210, 255, 0.35);
+}
+
+.alert-status-card {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 14px 16px;
+  border-radius: var(--radius-md);
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid var(--border-color);
+}
+
+.status-icon {
+  font-size: 1.4rem;
+}
+
+.status-info {
+  flex: 1;
+}
+
+.status-headline {
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: var(--text-main);
+}
+
+.status-sub {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+}
+
+.status-diff-pill {
+  font-family: 'Outfit', sans-serif;
+  font-size: 0.88rem;
+  font-weight: 700;
+  padding: 4px 10px;
+  border-radius: var(--radius-full);
+  background: rgba(0, 210, 255, 0.12);
+  color: var(--brand-cyan);
+}
+
+/* ==========================================================================
+   푸터 (Footer)
+   ========================================================================== */
+.main-footer {
+  margin-top: 40px;
+  padding-top: 24px;
+  border-top: 1px solid var(--border-color);
+  text-align: center;
+  color: var(--text-dim);
+  font-size: 0.78rem;
+}
+
+.footer-disclaimer {
+  font-size: 0.72rem;
+  margin-top: 6px;
+  line-height: 1.5;
+}
+
+/* ==========================================================================
+   반응형 미디어 쿼리 (Responsive Layout)
+   ========================================================================== */
+@media (max-width: 1024px) {
+  .hero-rate-body {
+    grid-template-columns: 1fr;
+    gap: 18px;
+  }
+  .advisor-factors-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  .chart-card {
+    grid-column: span 12;
+  }
+  .calculator-card {
+    grid-column: span 12;
+  }
+  .trip-planner-card {
+    grid-column: span 12;
+  }
+  .alert-card {
+    grid-column: span 12;
+  }
+  .trip-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 640px) {
+  .app-container {
+    padding: 16px 12px 40px;
+  }
+  .main-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+  }
+  .header-actions {
+    width: 100%;
+    justify-content: flex-end;
+  }
+  .main-rate-value {
+    font-size: 2.7rem;
+  }
+  .rates-breakdown-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  .advisor-factors-grid {
+    grid-template-columns: 1fr;
+  }
+  .chart-stats-bar {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}

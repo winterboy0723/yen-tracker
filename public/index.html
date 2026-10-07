@@ -1,0 +1,489 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>엔화 변동 추적기 | 네이버 고시 환율 & 매수 타이밍 어드바이저</title>
+  <meta name="description" content="실시간 네이버 고시 환율 기준 엔화 변동 추적기. 다각도 매수 타이밍 분석(가격 밴드, RSI, 거시 금리, 분할 매수 전략) 및 일본 여행 환전 계산기를 제공합니다.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Pretendard:wght@300;400;500;600;700;800&family=Outfit:wght@400;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body class="dark-theme">
+  <!-- 배경 글로우 효과 -->
+  <div class="bg-glow bg-glow-1"></div>
+  <div class="bg-glow bg-glow-2"></div>
+
+  <div class="app-container">
+    <!-- 헤더 -->
+    <header class="main-header">
+      <div class="logo-area">
+        <div class="logo-icon">¥</div>
+        <div class="logo-text">
+          <h1>엔화 변동 추적기 <span class="badge-sub">YenTracker</span></h1>
+          <p class="source-tag">
+            <span class="live-pulse"></span>
+            <span id="headerSourceText">네이버 금융 (하나은행 고시 기준)</span>
+            <span class="divider">•</span>
+            <span id="lastUpdatedTime">조회 중...</span>
+          </p>
+        </div>
+      </div>
+      <div class="header-actions">
+        <button id="refreshBtn" class="btn-refresh" title="실시간 환율 새로고침">
+          <svg class="refresh-icon" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.57-8.38l5.67-5.67"/>
+          </svg>
+          <span>새로고침</span>
+        </button>
+        <button id="themeToggleBtn" class="btn-theme" title="다크/라이트 모드 전환">
+          <span class="theme-icon">🌙</span>
+        </button>
+      </div>
+    </header>
+
+    <!-- 메인 대시보드 그리드 -->
+    <main class="dashboard-grid">
+      
+      <!-- 1. 메인 환율 현황 & 타이밍 신호등 히어로 섹션 -->
+      <section class="card hero-rate-card" id="heroRateSection">
+        <div class="card-header">
+          <div class="currency-pair">
+            <span class="flag-icon">🇯🇵</span>
+            <span class="pair-title">JPY / KRW (100엔)</span>
+            <span class="round-badge" id="noticeRoundBadge">고시회차 대기</span>
+          </div>
+          <div class="market-status-badge" id="marketStatusBadge">
+            <span class="status-dot"></span>
+            <span id="marketStatusText">시장 확인 중</span>
+          </div>
+        </div>
+
+        <div class="hero-rate-body">
+          <div class="price-display-group">
+            <div class="main-price-row">
+              <span class="currency-symbol">₩</span>
+              <span class="main-rate-value" id="currentRate">---.--</span>
+              <span class="rate-unit">원 / 100엔</span>
+            </div>
+            <div class="fluctuation-row" id="fluctuationContainer">
+              <span class="fluc-icon" id="flucIcon">-</span>
+              <span class="fluc-diff" id="flucDiff">0.00</span>
+              <span class="fluc-ratio" id="flucRatio">(0.00%)</span>
+              <span class="fluc-desc">전일 고시 대비</span>
+            </div>
+          </div>
+
+          <!-- 실시간 매수 종합 평가 배너 -->
+          <div class="timing-verdict-box" id="timingVerdictBox">
+            <div class="verdict-score-ring">
+              <svg viewBox="0 0 36 36" class="circular-chart">
+                <path class="circle-bg" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"/>
+                <path id="scoreCircle" class="circle" stroke-dasharray="0, 100" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"/>
+                <text x="18" y="20.35" class="percentage" id="scoreText">--</text>
+              </svg>
+            </div>
+            <div class="verdict-content">
+              <div class="verdict-tag" id="verdictTag">분석 계산 중</div>
+              <h2 class="verdict-title" id="verdictTitle">환율 분석 데이터를 불러오고 있습니다</h2>
+              <p class="verdict-desc" id="verdictDesc">네이버 실시간 고시가와 최근 60일 밴드를 바탕으로 최적 매수 타이밍을 도출합니다.</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- 실제 적용 환율별 가격표 (스프레드 및 우대율) -->
+        <div class="rates-breakdown-grid">
+          <div class="rate-subcard">
+            <div class="subcard-label">매매기준율</div>
+            <div class="subcard-val" id="rateBase">---.--원</div>
+            <div class="subcard-tip">국제 외환시장 기준</div>
+          </div>
+          <div class="rate-subcard highlight-subcard">
+            <div class="subcard-label">
+              <span>트래블카드 / 토스 (100% 우대)</span>
+              <span class="badge-best">추천</span>
+            </div>
+            <div class="subcard-val text-brand" id="rateTravelCard">---.--원</div>
+            <div class="subcard-tip">토스 외화체크카드 / 트래블로그 환전 시</div>
+          </div>
+          <div class="rate-subcard">
+            <div class="subcard-label">일반 은행 환전 (90% 우대)</div>
+            <div class="subcard-val" id="rateBank90">---.--원</div>
+            <div class="subcard-tip">외화통장 미연결 / 신한 쏠 / 국민 90% 환전</div>
+          </div>
+          <div class="rate-subcard">
+            <div class="subcard-label">현찰 살 때 (창구 기본)</div>
+            <div class="subcard-val" id="rateCashBuy">---.--원</div>
+            <div class="subcard-tip">공항/일반 은행창구 (비추천)</div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 2. 다각도 매수 타이밍 정밀 분석 (4-Aspect Advisor) -->
+      <section class="card advisor-card">
+        <div class="card-header">
+          <div class="header-title-group">
+            <span class="section-icon">🧠</span>
+            <h2>엔화 매수 타이밍 다각도 분석</h2>
+          </div>
+          <span class="badge-info">4대 핵심 지표 종합</span>
+        </div>
+
+        <div class="advisor-factors-grid">
+          <!-- 1) 가격 밴드 (Price Band) -->
+          <div class="factor-item" id="factorPriceBand">
+            <div class="factor-top">
+              <span class="factor-icon">📉</span>
+              <span class="factor-name">1. 가격 밴드 & 저점 평가</span>
+              <span class="factor-badge" id="badgePriceBand">평가 중</span>
+            </div>
+            <div class="factor-score-bar">
+              <div class="bar-fill" id="barFillPriceBand" style="width: 0%"></div>
+            </div>
+            <p class="factor-desc" id="descPriceBand">최근 60일 및 역대 엔화 밴드 내 현재 가격대의 저평가 수준을 분석합니다.</p>
+          </div>
+
+          <!-- 2) 기술적 모멘텀 (RSI & 이동평균) -->
+          <div class="factor-item" id="factorTechnical">
+            <div class="factor-top">
+              <span class="factor-icon">📊</span>
+              <span class="factor-name">2. 기술적 지표 (RSI & 이격도)</span>
+              <span class="factor-badge" id="badgeTechnical">평가 중</span>
+            </div>
+            <div class="factor-score-bar">
+              <div class="bar-fill" id="barFillTechnical" style="width: 0%"></div>
+            </div>
+            <p class="factor-desc" id="descTechnical">14일 RSI 과매도 구간 및 20일 이동평균선 대비 단기 이격도를 산출합니다.</p>
+          </div>
+
+          <!-- 3) 거시 정책 & 금리차 (BOJ / Fed / BOK) -->
+          <div class="factor-item" id="factorMacro">
+            <div class="factor-top">
+              <span class="factor-icon">🏛️</span>
+              <span class="factor-name">3. 통화 정책 & 금리 흐름</span>
+              <span class="factor-badge" id="badgeMacro">엔저 지속세</span>
+            </div>
+            <div class="factor-score-bar">
+              <div class="bar-fill" id="barFillMacro" style="width: 75%"></div>
+            </div>
+            <p class="factor-desc" id="descMacro">일본은행(BOJ)의 추가 금리 인상 기조와 한·일 금리차를 감안한 중장기 엔고 전환 리스크를 평가합니다.</p>
+          </div>
+
+          <!-- 4) 여행자 맞춤형 분할 환전 전략 (DCA Guide) -->
+          <div class="factor-item" id="factorDCA">
+            <div class="factor-top">
+              <span class="factor-icon">✈️</span>
+              <span class="factor-name">4. 분할 환전 (DCA) 가이드</span>
+              <span class="factor-badge" id="badgeDCA">3회 분할 권장</span>
+            </div>
+            <div class="dca-split-preview">
+              <div class="split-pill split-1">1차 (지금): <strong id="dcaPill1">40%</strong></div>
+              <div class="split-pill split-2">2차 (추가하락시): <strong id="dcaPill2">40%</strong></div>
+              <div class="split-pill split-3">3차 (출발직전): <strong id="dcaPill3">20%</strong></div>
+            </div>
+            <p class="factor-desc" id="descDCA">한 번에 전액 환전하기보다 850원 초반대에서 1차 매수 후 리스크를 분산하는 전략입니다.</p>
+          </div>
+        </div>
+
+        <!-- 전문가 매수 가이드 종합 요약 코멘트 -->
+        <div class="advisor-summary-callout" id="advisorSummaryCallout">
+          <div class="callout-icon">💡</div>
+          <div class="callout-text">
+            <strong>여행자를 위한 맞춤형 행동 요령:</strong>
+            <span id="advisorActionText">데이터를 분석하여 최선의 환전 액션을 계산하고 있습니다.</span>
+          </div>
+        </div>
+      </section>
+
+      <!-- 3. 실시간 인터랙티브 차트 섹션 -->
+      <section class="card chart-card">
+        <div class="card-header">
+          <div class="header-title-group">
+            <span class="section-icon">📈</span>
+            <h2>환율 변동 추이 차트</h2>
+          </div>
+          <div class="chart-controls">
+            <button class="btn-range active" data-range="7d">1주일</button>
+            <button class="btn-range" data-range="30d">1개월</button>
+            <button class="btn-range" data-range="60d">3개월</button>
+            <button class="btn-range" data-range="naver">네이버 공식차트</button>
+          </div>
+        </div>
+
+        <!-- 캔버스 차트 영역 -->
+        <div class="chart-wrapper" id="canvasChartWrapper">
+          <canvas id="rateHistoryChart"></canvas>
+        </div>
+
+        <!-- 네이버 공식 차트 이미지 탭 (대체 뷰) -->
+        <div class="naver-chart-wrapper" id="naverChartWrapper" style="display: none;">
+          <div class="naver-chart-tabs">
+            <button class="btn-naver-period active" data-period="month">1개월</button>
+            <button class="btn-naver-period" data-period="month3">3개월</button>
+            <button class="btn-naver-period" data-period="year">1년</button>
+            <button class="btn-naver-period" data-period="year3">3년</button>
+            <button class="btn-naver-period" data-period="year10">10년</button>
+          </div>
+          <div class="naver-img-container">
+            <img id="naverChartImg" src="" alt="네이버 환율 차트" loading="lazy">
+          </div>
+        </div>
+
+        <!-- 차트 기간 내 통계 바 -->
+        <div class="chart-stats-bar">
+          <div class="stat-cell">
+            <span class="stat-label">기간 최저</span>
+            <span class="stat-val text-buy" id="statMinRate">---.--원</span>
+          </div>
+          <div class="stat-cell">
+            <span class="stat-label">기간 평균</span>
+            <span class="stat-val" id="statAvgRate">---.--원</span>
+          </div>
+          <div class="stat-cell">
+            <span class="stat-label">기간 최고</span>
+            <span class="stat-val text-sell" id="statMaxRate">---.--원</span>
+          </div>
+          <div class="stat-cell">
+            <span class="stat-label">현재 위치</span>
+            <span class="stat-val text-highlight" id="statPercentile">--% (저점권)</span>
+          </div>
+        </div>
+      </section>
+
+      <!-- 4. 실시간 환전 계산기 & 트래블 수수료 비교 -->
+      <section class="card calculator-card">
+        <div class="card-header">
+          <div class="header-title-group">
+            <span class="section-icon">🧮</span>
+            <h2>스마트 환전 계산기</h2>
+          </div>
+          <span class="badge-tag">실시간 우대율 자동 반영</span>
+        </div>
+
+        <div class="calc-grid">
+          <!-- 입력창 1: KRW (원화) -->
+          <div class="calc-input-box">
+            <label for="inputKrw">원화 금액 (KRW)</label>
+            <div class="input-with-currency">
+              <span class="curr-symbol">₩</span>
+              <input type="number" id="inputKrw" placeholder="예: 1,000,000" value="1000000" step="10000">
+            </div>
+            <div class="quick-presets">
+              <button class="btn-preset" data-krw="300000">30만원</button>
+              <button class="btn-preset" data-krw="500000">50만원</button>
+              <button class="btn-preset" data-krw="1000000">100만원</button>
+              <button class="btn-preset" data-krw="2000000">200만원</button>
+            </div>
+          </div>
+
+          <div class="calc-swap-arrow" id="calcSwapBtn" title="단위 전환">
+            ⇄
+          </div>
+
+          <!-- 입력창 2: JPY (엔화) -->
+          <div class="calc-input-box">
+            <label for="inputJpy">엔화 금액 (JPY)</label>
+            <div class="input-with-currency">
+              <span class="curr-symbol">¥</span>
+              <input type="number" id="inputJpy" placeholder="예: 100,000" step="1000">
+            </div>
+            <div class="quick-presets">
+              <button class="btn-preset-jpy" data-jpy="30000">3만엔</button>
+              <button class="btn-preset-jpy" data-jpy="50000">5만엔</button>
+              <button class="btn-preset-jpy" data-jpy="100000">10만엔</button>
+              <button class="btn-preset-jpy" data-jpy="200000">20만엔</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- 수수료 절약 비교표 -->
+        <div class="fee-comparison-box">
+          <div class="comparison-title">
+            <span>💡 환전 방식별 실부담금 & 절약액 비교</span>
+          </div>
+          <div class="comparison-table">
+            <div class="comp-row best-row">
+              <div class="comp-col col-method">
+                <span class="method-badge">최고 혜택 (수수료 0원)</span>
+                <strong>토스뱅크 외화체크카드 / 트래블카드</strong>
+                <small>토스 외화통장 연결 마스터카드, 트래블로그, 트래블월렛</small>
+              </div>
+              <div class="comp-col col-amount" id="compTravelAmount">---,---원</div>
+              <div class="comp-col col-diff text-buy">기준 환산 (수수료 0원)</div>
+            </div>
+
+            <div class="comp-row">
+              <div class="comp-col col-method">
+                <strong>시중은행 모바일 환전 (90% 우대)</strong>
+                <small>외화통장 미연결 일반 결제 또는 신한 쏠 / 국민 90% 환전</small>
+              </div>
+              <div class="comp-col col-amount" id="compBank90Amount">---,---원</div>
+              <div class="comp-col col-diff" id="compBank90Diff">+---원 손실</div>
+            </div>
+
+            <div class="comp-row worst-row">
+              <div class="comp-col col-method">
+                <strong>공항 / 은행 창구 일반 현찰 환전</strong>
+                <small>환율 우대 미적용 (수수료 약 1.75%)</small>
+              </div>
+              <div class="comp-col col-amount" id="compCashBuyAmount">---,---원</div>
+              <div class="comp-col col-diff text-sell" id="compCashBuyDiff">+---원 낭비</div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 5. 일본 여행 맞춤 예산 플래너 (Japan Trip Budget) -->
+      <section class="card trip-planner-card">
+        <div class="card-header">
+          <div class="header-title-group">
+            <span class="section-icon">🗾</span>
+            <h2>일본 여행 예산 & 환전 플래너</h2>
+          </div>
+          <div class="dday-selector">
+            <label for="tripDays">여행 기간:</label>
+            <select id="tripDays">
+              <option value="3">2박 3일</option>
+              <option value="4" selected>3박 4일</option>
+              <option value="5">4박 5일</option>
+              <option value="7">6박 7일</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="trip-grid">
+          <!-- 좌측: 카테고리별 엔화 예산 산출 -->
+          <div class="trip-items-form">
+            <div class="trip-input-row">
+              <span class="item-emoji">🍜</span>
+              <div class="item-meta">
+                <label for="budgetFood">1일 식비 & 간식 (1인당)</label>
+                <small>보통 1일 5,000엔 (라멘, 스시, 편의점)</small>
+              </div>
+              <input type="number" id="budgetFood" value="5000" step="500">
+              <span class="input-unit">¥/일</span>
+            </div>
+
+            <div class="trip-input-row">
+              <span class="item-emoji">🚇</span>
+              <div class="item-meta">
+                <label for="budgetTransport">1일 교통비 (스이카/지하철)</label>
+                <small>도쿄/오사카 시내 기준 약 1,200엔</small>
+              </div>
+              <input type="number" id="budgetTransport" value="1200" step="200">
+              <span class="input-unit">¥/일</span>
+            </div>
+
+            <div class="trip-input-row">
+              <span class="item-emoji">🛍️</span>
+              <div class="item-meta">
+                <label for="budgetShopping">쇼핑 & 기념품 (총액)</label>
+                <small>돈키호테, 면세점, 의류 등</small>
+              </div>
+              <input type="number" id="budgetShopping" value="25000" step="5000">
+              <span class="input-unit">¥</span>
+            </div>
+
+            <div class="trip-input-row">
+              <span class="item-emoji">🎟️</span>
+              <div class="item-meta">
+                <label for="budgetEtc">입장료 & 비상금 (총액)</label>
+                <small>전망대, 유니버셜/디즈니, 비상 현금</small>
+              </div>
+              <input type="number" id="budgetEtc" value="15000" step="3000">
+              <span class="input-unit">¥</span>
+            </div>
+          </div>
+
+          <!-- 우측: 총 환전 필요액 대시보드 -->
+          <div class="trip-summary-panel">
+            <div class="trip-summary-box">
+              <div class="summary-label">총 필요 경비 (현지 소비)</div>
+              <div class="summary-jpy">
+                <span id="tripTotalJpy">0</span>
+                <span class="unit">JPY (엔)</span>
+              </div>
+              <div class="summary-krw-wrap">
+                <span>현재 환율 기준 약</span>
+                <strong id="tripTotalKrw">0</strong>
+                <span>원</span>
+              </div>
+            </div>
+
+            <!-- 분할 환전 실행 플랜 -->
+            <div class="dca-action-plan">
+              <div class="plan-header">추천 분할 환전 일정표</div>
+              <ul class="plan-list">
+                <li>
+                  <span class="plan-stage">1차 (오늘)</span>
+                  <span class="plan-percent">40%</span>
+                  <strong class="plan-val" id="planStage1">0엔</strong>
+                </li>
+                <li>
+                  <span class="plan-stage">2차 (출발 2주전/조정시)</span>
+                  <span class="plan-percent">40%</span>
+                  <strong class="plan-val" id="planStage2">0엔</strong>
+                </li>
+                <li>
+                  <span class="plan-stage">3차 (출발 전날)</span>
+                  <span class="plan-percent">20%</span>
+                  <strong class="plan-val" id="planStage3">0엔</strong>
+                </li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 6. 목표 환율 알림 시뮬레이터 -->
+      <section class="card alert-card">
+        <div class="card-header">
+          <div class="header-title-group">
+            <span class="section-icon">🔔</span>
+            <h2>목표 환율 알림 & 저점 타겟팅</h2>
+          </div>
+          <span class="badge-tag">저점 자동 감지</span>
+        </div>
+
+        <div class="alert-box-content">
+          <div class="alert-desc">
+            내가 원하는 목표 환율을 설정해 두면, 현재 환율과의 이격률을 실시간으로 추적합니다.
+          </div>
+          <div class="alert-input-row">
+            <div class="alert-field">
+              <label for="targetRateInput">희망 매수 목표가 (100엔당)</label>
+              <div class="target-input-wrap">
+                <input type="number" id="targetRateInput" value="845.00" step="0.5">
+                <span class="unit">원</span>
+              </div>
+            </div>
+            <button id="setTargetBtn" class="btn-primary">목표가 추적 등록</button>
+          </div>
+          
+          <div class="alert-status-card" id="alertStatusCard">
+            <div class="status-icon" id="alertStatusIcon">🎯</div>
+            <div class="status-info">
+              <div class="status-headline" id="alertHeadline">목표 환율 설정됨</div>
+              <div class="status-sub" id="alertSub">현재 환율과의 거리 계산 중...</div>
+            </div>
+            <div class="status-diff-pill" id="alertDiffPill">--%</div>
+          </div>
+        </div>
+      </section>
+
+    </main>
+
+    <!-- 푸터 -->
+    <footer class="main-footer">
+      <div class="footer-content">
+        <p><strong>엔화 변동 추적기 (Yen Tracker)</strong> • 네이버 페이 증권 (하나은행 고시회차) 실시간 API 연동</p>
+        <p class="footer-disclaimer">※ 본 서비스의 데이터는 네이버 금융 공개 시세를 기반으로 제공되며, 환전 시점의 은행별 스프레드 및 고시회차에 따라 실제 결제 금액과 약간의 차이가 발생할 수 있습니다.</p>
+      </div>
+    </footer>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
